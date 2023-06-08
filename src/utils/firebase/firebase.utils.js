@@ -17,7 +17,11 @@ import {
   getFirestore,
   doc,
   getDoc,
-  setDoc
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs
 } from 'firebase/firestore';
 
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -32,7 +36,7 @@ const firebaseConfig = {
   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_SENDER_ID,
   appId: process.env.REACT_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
 
 // Initialize Firebase
@@ -45,7 +49,9 @@ googleProvider.setCustomParameters({
 });
 
 export const auth = getAuth();
+
 export const signInWithGooglePopup = () => signInWithPopup(auth,googleProvider);
+
 export const signInWithGoogleRedirect = async () => {
   const {user} = await signInWithRedirect(auth,googleProvider);
   console.log({user});
@@ -107,3 +113,41 @@ export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth,
 Observable
 onAuthStateChanged(auth, callback, errorCallback, completeCallbacx);
 */
+
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  //Open transaction
+  const batch = writeBatch(db);
+  const collectionRef = collection(db, collectionKey);
+  
+  objectsToAdd.forEach((object) => {
+     const docRef = doc(collectionRef, object.title.toLowerCase());
+     batch.set(docRef, object);
+  });
+
+  // Commit Transaction
+  await batch.commit();
+  console.log('done');
+};
+
+
+///Libries javascript changes all the time, it is a best practise to use or create
+//a method to encapsulate it, so when they changes, you have only one place to change.
+export const getCategoriesAndDocuments = async ()=>{
+
+  const collectionRef = collection(db, 'categories');
+  const q = query(collectionRef);
+  const querySnapshot = await getDocs(q);
+
+  //querySnapshot.docs.reduce(callback,initial object);
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot)=>{
+    const {title, items} = docSnapshot.data();
+    acc[title.toLowerCase()]= items;
+    return acc;
+  },{});
+
+  return categoryMap;
+
+}
