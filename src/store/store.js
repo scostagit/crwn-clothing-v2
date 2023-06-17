@@ -1,31 +1,27 @@
 import { compose, createStore, applyMiddleware } from 'redux';
-import logger from 'redux-logger';
+// import logger from 'redux-logger';
 
 /// root - reducer 
 import { rootReducer } from './root-reducer';
 
-/*const myMiddleware = (store)=>(next)=>(action)=>{
 
-  if(!action.type){
+//Middlewares will be trigged between the start and end of action
+const loggerMiddleware = (store) => (next) => (action) => {
+  if (!action.type) {
     return next(action);
   }
 
-  console.log('type: ' + action.type);
-  console.log('paylod: ' + action.payload);
-  console.log('current state: ' + store.getState());
-  
+  console.log('type: ', action.type);
+  console.log('payload: ', action.payload);
+  console.log('currentState: ', store.getState());
+
   next(action);
 
-  console.log('next state: ' + store.getState());
-  console.log('sergio')
-}
+  console.log('next state: ', store.getState());
+};
 
 
-const middleWares = [myMiddleware];*/
-//Middlewares will be trigged between the start and end of action
-const middleWares = [process.env.NODE_ENV === 'development' && logger].filter(
-  Boolean
-);
+const middleWares = [loggerMiddleware];
 
 const composedEnhancers = compose(applyMiddleware(...middleWares));
 
