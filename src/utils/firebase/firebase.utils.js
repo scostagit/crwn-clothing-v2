@@ -132,7 +132,7 @@ export const addCollectionAndDocuments = async (
   console.log('done');
 };
 
-
+/*
 ///Libries javascript changes all the time, it is a best practise to use or create
 //a method to encapsulate it, so when they changes, you have only one place to change.
 export const getCategoriesAndDocuments = async ()=>{
@@ -149,5 +149,13 @@ export const getCategoriesAndDocuments = async ()=>{
   },{});
 
   return categoryMap;
-
 }
+*/
+
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, 'categories');
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => doc.data());
+};
