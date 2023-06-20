@@ -1,7 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 
-
 import {
     getAuth,
     signInWithRedirect,
@@ -132,30 +131,27 @@ export const addCollectionAndDocuments = async (
   console.log('done');
 };
 
-/*
-///Libries javascript changes all the time, it is a best practise to use or create
-//a method to encapsulate it, so when they changes, you have only one place to change.
-export const getCategoriesAndDocuments = async ()=>{
-
-  const collectionRef = collection(db, 'categories');
-  const q = query(collectionRef);
-  const querySnapshot = await getDocs(q);
-
-  //querySnapshot.docs.reduce(callback,initial object);
-  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot)=>{
-    const {title, items} = docSnapshot.data();
-    acc[title.toLowerCase()]= items;
-    return acc;
-  },{});
-
-  return categoryMap;
-}
-*/
-
 export const getCategoriesAndDocuments = async () => {
   const collectionRef = collection(db, 'categories');
   const q = query(collectionRef);
 
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => doc.data());
+};
+
+
+///Libries javascript changes all the time, it is a best practise to use or create
+//a method to encapsulate it, so when they changes, you have only one place to change.
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (userAuth) => {
+        unsubscribe();
+        resolve(userAuth);
+      },
+      reject
+    );
+  });
 };
