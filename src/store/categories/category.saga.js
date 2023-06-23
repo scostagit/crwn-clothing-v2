@@ -4,7 +4,7 @@ import { getCategoriesAndDocuments } from '../../utils/firebase/firebase.utils';
 
 import {
   fetchCategoriesSuccess,
-  fetchCategoriesFailure,
+  fetchCategoriesFailed,
 } from './category.action';
 
 import { CATEGORIES_ACTION_TYPES } from './category.types';
@@ -21,7 +21,7 @@ export function* fetchCategoriesAsync() {
 
   } catch (error) {
     //if some error happens, please distpach "put", an action.
-    yield put(fetchCategoriesFailure(error)); 
+    yield put(fetchCategoriesFailed(error)); 
   }
 }
 
