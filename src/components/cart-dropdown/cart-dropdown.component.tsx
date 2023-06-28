@@ -11,7 +11,17 @@ import {
   CartItems,
 } from './cart-dropdown.styles';
 
-import { useCallback, useState} from 'react';
+import { useCallback, useState, useMemo} from 'react';
+
+//function only for test, it is not party of the project.
+const sleep = (milliseconds: number) => {
+  var start = new Date().getTime();
+  for(var i = 0; i < 1e7; i++) {
+    if(new Date().getTime() - start > milliseconds) {
+      break;
+    }
+  }
+};
 
 const CartDropdown = () => {
   const cartItems = useSelector(selectCartItems);
@@ -23,7 +33,21 @@ const CartDropdown = () => {
 
   /*useCallback
    useCallback receicves two parameters 1 function, 2 state 
+
+   *useMemo: memorize the result of the function, not the function.
+   useCallback memorize the function.
   */
+   const count = 0;
+
+  const countTo100 = useMemo(() =>{
+    console.log('start');
+    sleep(2000);
+    console.log('end');
+    const result = count +100;
+    console.log(result);
+    return result;
+  },[]);
+
   const goToCheckoutHandler = useCallback(() => {
     navigate('/checkout'); //this function will be rendered only once.
     console.log(temp); // Display A
@@ -42,6 +66,7 @@ const CartDropdown = () => {
       <Button onClick={goToCheckoutHandler}>GO TO CHECKOUT</Button>
 
       <Button onClick={()=> { setTemp('B');}}>Update temp</Button>
+      {countTo100}
     </CartDropdownContainer>
   );
 };
